@@ -53,20 +53,11 @@ async function checkIfOrderValid(order) {
       'content-type': 'application/json; charset=UTF-8',
       'dpz-language': 'en',
       'dpz-market': 'UNITED_STATES',
-      market: 'UNITED_STATES',
-      'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-      'sec-ch-ua-mobile': '?1',
-      'sec-fetch-dest': 'empty',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-site': 'same-origin',
-      'x-dpz-d': 'ed25f1cc-8f94-4028-9178-011e2e2e52fb',
     },
     referrer: 'https://order.dominos.com/assets/build/xdomain/proxy.html',
     referrerPolicy: 'strict-origin-when-cross-origin',
     body: JSON.stringify(order),
     method: 'POST',
-    mode: 'cors',
-    credentials: 'include',
   });
 
   const orderValid = await response.json();
@@ -145,7 +136,26 @@ const order = {
   },
 };
 
-checkIfOrderValid(order).then((orderValid) => console.log(orderValid.Order.Products));
+async function getOrderPrice(order) {
+  const response = await fetch(`${URL}price-order`, {
+    headers: {
+      accept: 'application/json, text/javascript, */*; q=0.01',
+      'accept-language': 'en-US,en;q=0.9',
+      'content-type': 'application/json; charset=UTF-8',
+      'dpz-language': 'en',
+      'dpz-market': 'UNITED_STATES',
+    },
+    referrer: 'https://order.dominos.com/assets/build/xdomain/proxy.html',
+    referrerPolicy: 'strict-origin-when-cross-origin',
+    body: JSON.stringify(order),
+    method: 'POST',
+  });
+
+  const orderPrice = await response.json();
+  return orderPrice;
+}
+getOrderPrice(order).then((orderPrice) => console.log(orderPrice));
+// checkIfOrderValid(order).then((orderValid) => console.log(orderValid.Order.Products));
 // Test methods
 /*
 getStoresNearArea(typesOfOrders.Delivery, '07039', '6 Baldwin Terrace').then((storesNear) => console.log(storesNear.Stores[0]));
