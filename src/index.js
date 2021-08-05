@@ -9,7 +9,6 @@ const typesOfOrders = {
 // used Dev Tools in chrome - copy request as fetch to get fetch information
 // use async to make it easier to write - looks more procedural, but behaving asynchronously
 async function getStoresNearArea(typesOfOrders, cityRegionOrPostalCode, street = ' ') {
-  // https://order.dominos.com/power/store-locator?type=Delivery&c=Livingston%2C%20NJ%2007039&s=6%20Baldwin%20Terrace
   const response = await fetch(`${URL}store-locator?type=${typesOfOrders}&c=${cityRegionOrPostalCode}&s=${street}`, {
     headers: {
       accept: 'application/json, text/javascript, */*; q=0.01',
@@ -66,13 +65,13 @@ async function checkIfOrderValid(order) {
 const order = {
   Order: {
     Address: {
-      Street: '6 BALDWIN TER',
-      City: 'LIVINGSTON',
-      Region: 'NJ',
-      PostalCode: '07039-2702',
+      Street: '1124 GENESEE ST',
+      City: 'ROCHESTER',
+      Region: 'NY',
+      PostalCode: '14611-4108',
       Type: 'House',
-      StreetName: 'BALDWIN TER',
-      StreetNumber: '6',
+      StreetName: 'GENESEE ST',
+      StreetNumber: '1124',
     },
     Coupons: [
       {
@@ -82,29 +81,28 @@ const order = {
         IsBelowMinimumOrderAmount: false,
         IsBelowMinimumPaymentAmount: false,
         Tags: {
-          Hash: '1628188303176',
+          Hash: '1628193634999',
         },
       },
     ],
-    CustomerID: '',
-    Email: '',
-    Extension: '',
-    FirstName: '',
-    LastName: '',
+    Email: 'apiels19@gmail.com',
+    FirstName: 'Abbe',
+    LastName: 'Piels',
     LanguageCode: 'en',
     OrderChannel: 'OLO',
-    OrderID: '-jHOCaO60qWgshUPYgUb',
+    OrderID: 'UH556-fMitmA3UvYvbzk',
     OrderMethod: 'Web',
     OrderTaker: null,
     Payments: [],
-    Phone: '',
-    PhonePrefix: '',
+    Phone: '9734879830',
+    PhonePrefix: '1',
     Products: [
       {
         Code: '12SCREEN',
         Qty: 1,
-        ID: 2,
+        ID: 4,
         isNew: true,
+        ShowBestPriceMessage: true,
         Options: {
           X: {
             '1/1': '1',
@@ -112,21 +110,37 @@ const order = {
           C: {
             '1/1': '1',
           },
+          O: {
+            '1/1': '1',
+          },
+          M: {
+            '1/1': '1',
+          },
+          Td: {
+            '1/1': '1',
+          },
+          Si: {
+            '1/1': '1',
+          },
+          G: {
+            '1/1': '1',
+          },
         },
       },
       {
-        Code: 'B8PCCT',
+        Code: 'B8PCGT',
         Qty: 1,
-        ID: 3,
+        ID: 5,
         isNew: true,
+        ShowBestPriceMessage: false,
         Options: {
-          SIDICE: 1,
+          SIDMAR: 1,
         },
       },
     ],
     ServiceMethod: 'Delivery',
     SourceOrganizationURI: 'order.dominos.com',
-    StoreID: '3948',
+    StoreID: '3430',
     Tags: {},
     Version: '1.0',
     NoCombine: true,
@@ -150,18 +164,68 @@ async function getOrderPrice(order) {
     body: JSON.stringify(order),
     method: 'POST',
   });
-
   const orderPrice = await response.json();
   return orderPrice;
 }
-getOrderPrice(order).then((orderPrice) => console.log(orderPrice));
-// checkIfOrderValid(order).then((orderValid) => console.log(orderValid.Order.Products));
-// Test methods
+
+async function getAmount(order) {
+  const amt = await getOrderPrice(order);
+  const getOrderAmt = amt.Order.Amounts.Customer;
+  return getOrderAmt;
+}
+
+async function placeOrder(order) {
+  const response = await fetch(`${URL}place-order`, {
+    headers: {
+      accept: 'application/json, text/javascript, */*; q=0.01',
+      'accept-language': 'en-US,en;q=0.9',
+      'content-type': 'application/json; charset=UTF-8',
+      'dpz-language': 'en',
+      'dpz-market': 'UNITED_STATES',
+    },
+    referrer: 'https://order.dominos.com/assets/build/xdomain/proxy.html',
+    referrerPolicy: 'strict-origin-when-cross-origin',
+    body: JSON.stringify(order),
+    method: 'POST',
+  });
+  const placed = await response.json();
+  return placed;
+}
+order.Order.Payments.push({
+  Type: 'CreditCard',
+  Amount: 23.19,
+  Number: '4482330087021630',
+  CardType: 'VISA',
+  Expiration: '1224',
+  SecurityCode: '683',
+  PostalCode: '07039',
+});
 /*
-getStoresNearArea(typesOfOrders.Delivery, '07039', '6 Baldwin Terrace').then((storesNear) => console.log(storesNear.Stores[0]));
-getStoreInfo('3948').then((oneStoreInfo) => console.log(oneStoreInfo));
-getMenu('3948').then((menuInfo) => console.log(menuInfo));
-getCoupon('3948', '9193').then((couponInfo) => console.log(couponInfo));
-getStoresNearArea('Delivery', '07039', '6 Baldwin Terrace').then((storesNear) => console.log(storesNear.Stores[0]));
-getStoreInfo('3948').then((oneStoreInfo) => console.log(oneStoreInfo));
+// Test methods
+//Get stores near specific area
+getStoresNearArea(typesOfOrders.Delivery, '14611', '1124  Genesse Street').then((storesNear) => console.log(storesNear.Stores[0]));
+//Get specific store's info
+getStoreInfo('3430').then((oneStoreInfo) => console.log(oneStoreInfo));
+//Get specific store's menu
+getMenu('3430').then((menuInfo) => console.log(menuInfo));
+//Get coupon ingo
+getCoupon('3430', '9193').then((couponInfo) => console.log(couponInfo));
+getCoupon('3430', '8223').then((couponInfo) => console.log(couponInfo));
+//Check if an order is valid
+checkIfOrderValid(order).then((orderValid) => console.log(orderValid.Order.Products));
+// Get price of order  and o ther info
+getOrderPrice(order).then((orderPrice) => console.log(orderPrice));
+//get price
+getAmount(order).then((getOrder) => console.log(getOrder));
+//Place order
+placeOrder(order, pay).then((placed) => console.log(placed));
+// getStoresNearArea(typesOfOrders.Delivery, '14611', '1124  Genesse Street').then((storesNear) => console.log(storesNear.Stores[0]));
+// checkIfOrderValid(order).then((orderValid) => console.log(orderValid));
+getAmount(order).then((getOrder) => console.log(getOrder));
+// placeOrder(order, pay).then((placed) => console.log(placed));
+getStoresNearArea(typesOfOrders.Delivery, '14611', '1124  Genesse Street').then((storesNear) => console.log(storesNear.Stores[0]));
 */
+// getStoresNearArea(typesOfOrders.Delivery, '14611', '1124  Genesse Street').then((storesNear) => console.log(storesNear.Stores[0]));
+// checkIfOrderValid(order).then((orderValid) => console.log(orderValid));
+// console.log(order.Order.Payments);
+placeOrder(order).then((placed) => console.log(placed));
