@@ -55,15 +55,13 @@ function configureProfile(email, first, last, phone, prefix) {
   order.Order.Phone = `${phone}`;
   order.Order.PhonePrefix = `${prefix}`;
 }
-function configureOrderInformation(orderId, service, storeId) {
+function configureOrderInformation(orderId) {
   order.Order.OrderID = `${orderId}`;
-  order.Order.ServiceMethod = `${service}`;
-  order.Order.StoreID = `${storeId}`;
 }
 function configureOrder() {
   configureAddress('6', 'BALDWIN TER', '6 BALDWIN TER', 'NJ', 'LIVINGSTON', '07039-2702');
   configureProfile('apiels19@gmail.com', 'Abbe', 'Piels', '9734879830', '1');
-  configureOrderInformation('6cWEVL6Hi0T5uXI8hYQ6', 'Delivery', '3948');
+  configureOrderInformation('6cWEVL6Hi0T5uXI8hYQ6');
 }
 order.Order.Coupons.push({
   Code: '9193',
@@ -122,6 +120,8 @@ const typesOfOrders = {
 // used Dev Tools in chrome - copy request as fetch to get fetch information
 // use async to make it easier to write - looks more procedural, but behaving asynchronously
 async function getStoresNearArea(typesOfOrders, cityRegionOrPostalCode, street = ' ') {
+  order.Order.ServiceMethod = `${typesOfOrders}`;
+  order.Order.Address.Street = `${street}`;
   const response = await fetch(`${URL}store-locator?type=${typesOfOrders}&c=${cityRegionOrPostalCode}&s=${street}`, {
     headers: {
       accept: 'application/json, text/javascript, */*; q=0.01',
@@ -138,8 +138,11 @@ async function getStoresNearArea(typesOfOrders, cityRegionOrPostalCode, street =
     credentials: 'include',
   });
   const storesNear = await response.json();
+  order.Order.StoreID = storesNear.Stores[0].StoreID;
+  console.log(order.Order);
   return storesNear;
 }
+
 async function getStoreInfo(idStore) {
   const response = await fetch(`${URL}store/${idStore}/profile`);
   const oneStoreInfo = await response.json();
@@ -191,6 +194,7 @@ async function getOrderPrice(order) {
     method: 'POST',
   });
   const orderPrice = await response.json();
+  // orderPrice.Stores[0].StoreID =
   return orderPrice;
 }
 
@@ -231,7 +235,15 @@ async function placeOrder(order) {
 // Test methods
 configureOrder();
 // Get stores near specific area
-getStoresNearArea(typesOfOrders.Delivery, '14611', '1124  Genesse Street').then((storesNear) => console.log(storesNear.Stores[0]));
+// getCoupon('3430', '9193').then((couponInfo) => console.log(couponInfo));
+getStoresNearArea(typesOfOrders.Delivery, '07039', '6 Baldwin Ter').then((storesNear) => console.log(storesNear.Stores[0]));
+checkIfOrderValid(order).then((orderValid) => console.log(orderValid.Order.Products));
+// configureOrderInformation(typesOfOrders.Delivery, '07039', '6 Baldwin Ter');
+/*
+console.log(order.Order.StoreID);
+console.log(order.Order.ServiceMethod);
+console.log(order.Order.Address.Street);
+/*
 // Get specific store's info
 getStoreInfo('3430').then((oneStoreInfo) => console.log(oneStoreInfo));
 // Get specific store's menu
@@ -247,3 +259,4 @@ getOrderPrice(order).then((orderPrice) => console.log(orderPrice));
 getAmount(order).then((getOrder) => console.log(getOrder));
 // Place order
 placeOrder(order).then((placed) => console.log(placed));
+*/
