@@ -36,6 +36,20 @@ const order = {
   },
 };
 
+order.Order.Coupons.push();
+
+order.Order.Products.push();
+
+order.Order.Payments.push({
+  Type: 'CreditCard',
+  Amount: 'XXX',
+  Number: 'XXX',
+  CardType: 'XXX',
+  Expiration: 'XXX',
+  SecurityCode: 'XXX',
+  PostalCode: 'XXX',
+});
+
 const fetch = require('node-fetch');
 // base URL for functions
 const URL = 'https://order.dominos.com/power/';
@@ -61,44 +75,10 @@ function configureOrderInformation(orderId, service, storeId) {
   order.Order.StoreID = `${storeId}`;
 }
 function configureOrder() {
-  configureAddress('6', 'BALDWIN TER', '6 BALDWIN TER', 'NJ', 'LIVINGSTON', '07039-2702');
-  configureProfile('apiels19@gmail.com', 'Abbe', 'Piels', '9734879830', '1');
-  configureOrderInformation('os8H-roLM36P7hZ1twe3', 'Delivery', '3948');
+  configureAddress();
+  configureProfile();
+  configureOrderInformation();
 }
-order.Order.Coupons.push({
-  Code: '9193',
-  Qty: 1,
-  ID: 1,
-  IsBelowMinimumOrderAmount: false,
-  IsBelowMinimumPaymentAmount: false,
-  Tags: {
-    Hash: '1628221026535',
-  },
-});
-
-order.Order.Products.push({
-  Code: '12SCREEN',
-  Qty: 1,
-  ID: 2,
-  isNew: true,
-  Options: {
-    X: {
-      '1/1': '1',
-    },
-    C: {
-      '1/1': '1',
-    },
-  },
-},
-{
-  Code: 'B8PCCT',
-  Qty: 1,
-  ID: 3,
-  isNew: true,
-  Options: {
-    SIDICE: 1,
-  },
-});
 
 const typesOfOrders = {
   Delivery: 'Delivery',
@@ -184,17 +164,7 @@ async function getAmount(order) {
   const getOrderAmt = amt.Order.Amounts.Customer;
   return getOrderAmt;
 }
-/*
-order.Order.Payments.push({
-  Type: '****',
-  Amount: '****',
-  Number: '****',
-  CardType: '****',
-  Expiration: '****',
-  SecurityCode: '****',
-  PostalCode: '***',
-});
-*/
+
 async function placeOrder(order) {
   const response = await fetch(`${URL}place-order`, {
     headers: {
@@ -216,22 +186,17 @@ async function placeOrder(order) {
 // Test methods
 configureOrder();
 // console.log(order);
-/*
 // Get stores near specific area
-getStoresNearArea(typesOfOrders.Delivery, '14611', '1124  Genesse Street').then((storesNear) => console.log(storesNear.Stores[0]));
+getStoresNearArea(typesOfOrders.Delivery, 'XXX', 'XXXXX').then((storesNear) => console.log(storesNear.Stores[0]));
 // Get specific store's info
-getStoreInfo('3430').then((oneStoreInfo) => console.log(oneStoreInfo));
+getStoreInfo('XXX').then((oneStoreInfo) => console.log(oneStoreInfo));
 // Get specific store's menu
-getMenu('3430').then((menuInfo) => console.log(menuInfo));
-// Get coupon ingo
-getCoupon('3430', '9193').then((couponInfo) => console.log(couponInfo));
-getCoupon('3430', '8223').then((couponInfo) => console.log(couponInfo));
+getMenu('XXX').then((menuInfo) => console.log(menuInfo));
+// Get coupon info
+getCoupon('XXXX', 'XXX').then((couponInfo) => console.log(couponInfo));
 // Check if an order is valid
 checkIfOrderValid(order).then((orderValid) => console.log(orderValid.Order.Products));
-// Get price of order  and o ther info
-getOrderPrice(order).then((orderPrice) => console.log(orderPrice));
 // get price
 getAmount(order).then((getOrder) => console.log(getOrder));
 // Place order
 placeOrder(order).then((placed) => console.log(placed));
-*/
