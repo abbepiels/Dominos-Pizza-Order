@@ -18,9 +18,7 @@
   },
   "homepage": "https://github.com/abbepiels/Dominos-Pizza-Order#readme",
   "dependencies": {
-    "node-fetch": "^2.6.1",
-    "prompt-sync": "^4.2.0",
-    "scanner.js": "^2.10.3"
+    "node-fetch": "^2.6.1"
   },
   "eslintConfig": {
     "extends": [
